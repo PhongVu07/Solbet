@@ -1,0 +1,1 @@
+pub const PRECISION: u128 = u64::MAX as u128;

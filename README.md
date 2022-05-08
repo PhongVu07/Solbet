@@ -1,3 +1,3 @@
-# SOLBET
+# Sol Token Staking
 
 In progress..
