@@ -1,7 +1,5 @@
 import React from "react";
 import { Button, Col, Row, Typography } from "antd";
-import { useWalletKit } from "@gokiprotocol/walletkit";
-import { useSolana, useConnectedWallet } from "@saberhq/use-solana";
 import { Link } from "react-router-dom";
 import { ComponentContainer, OptionCard } from "./style.home";
 import { PAGES } from "constants/pages";
@@ -9,10 +7,6 @@ import { PAGES } from "constants/pages";
 const { Title, Paragraph } = Typography;
 
 const Home = () => {
-  const { disconnect } = useSolana();
-  const wallet = useConnectedWallet();
-  const { connect } = useWalletKit();
-
   return (
     <ComponentContainer>
       <Title>Welcome to Gold Pool</Title>
@@ -30,7 +24,7 @@ const Home = () => {
         <Col md={12} sm={12}>
           <OptionCard>
             <Paragraph>Join a pool, stake token and earn</Paragraph>
-            <Link to={PAGES.POOL_DETAIL}>
+            <Link to={PAGES.STAKING}>
               <Button type="primary">Join a Pool</Button>
             </Link>
           </OptionCard>

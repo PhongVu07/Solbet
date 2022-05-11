@@ -8,15 +8,15 @@ import PoolDetail from "pages/PoolDetail";
 
 const AppRoute = () => {
   return (
-    <Layout>
-      <BrowserRouter>
+    <BrowserRouter>
+      <Layout>
         <Routes>
           <Route path={PAGES.HOME} element={<Home />} />
           <Route path={PAGES.POOL_MANAGER} element={<PoolManager />} />
-          <Route path={PAGES.POOL_DETAIL} element={<PoolDetail />} />
+          <Route path={PAGES.STAKING} element={<PoolDetail />} />
         </Routes>
-      </BrowserRouter>
-    </Layout>
+      </Layout>
+    </BrowserRouter>
   );
 };
 export default AppRoute;

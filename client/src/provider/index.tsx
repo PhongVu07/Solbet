@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer } from "react";
 import { IAction, IState } from "types/context";
+import { WalletKitProvider } from "@gokiprotocol/walletkit";
 import AppReducer from "./AppReducer";
 
 const initialState: IState = {};
@@ -18,8 +19,14 @@ export const Provider = ({ children }: { children: React.ReactChild }) => {
   const [state, dispatch] = useReducer(AppReducer, initialState);
 
   return (
-    <GlobalContext.Provider value={{ state, dispatch }}>
-      {children}
-    </GlobalContext.Provider>
+    <WalletKitProvider
+      app={{
+        name: "GoldPool",
+      }}
+    >
+      <GlobalContext.Provider value={{ state, dispatch }}>
+        {children}
+      </GlobalContext.Provider>
+    </WalletKitProvider>
   );
 };

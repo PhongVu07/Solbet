@@ -1,15 +1,12 @@
-import React from 'react'
-import { WalletKitProvider } from "@gokiprotocol/walletkit";
+import React from "react";
+import { WalletKitProvider, useWalletKit } from "@gokiprotocol/walletkit";
+import { useSolana, useConnectedWallet } from "@saberhq/use-solana";
 
 const PoolManager: React.FC = () => {
-  return (
-    <WalletKitProvider
-      app={{
-        name: "GoldPool",
-      }}
-    >
-      <></>
-    </WalletKitProvider>
-  )
-}
-export default PoolManager
+  const { disconnect } = useSolana();
+  const wallet = useConnectedWallet();
+  const { connect } = useWalletKit();
+
+  return <>Pool Manager</>;
+};
+export default PoolManager;
