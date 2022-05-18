@@ -1,3 +1,5 @@
+import { useWalletKit } from "@gokiprotocol/walletkit";
+import { useConnectedWallet, useSolana } from "@saberhq/use-solana";
 import { Button, Menu } from "antd";
 import { PAGES } from "constants/pages";
 import React from "react";
@@ -14,6 +16,10 @@ interface IProps {
 }
 
 const Layout: React.FC<IProps> = ({ children }) => {
+  const { disconnect } = useSolana();
+  const wallet = useConnectedWallet();
+  const { connect } = useWalletKit();
+
   return (
     <ComponentContainer>
       <StyledHeader>
@@ -28,7 +34,7 @@ const Layout: React.FC<IProps> = ({ children }) => {
             <HeaderItem>Staking</HeaderItem>
           </Link>
         </div>
-        <Button type="primary">Wallet</Button>
+        <Button onClick={connect} type="primary">Wallet</Button>
       </StyledHeader>
       <Container>{children}</Container>
     </ComponentContainer>
