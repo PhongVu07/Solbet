@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("5zBTgkGKfAcsVdTh5gjgW7KyXYzUZc9ZWuukMmbNqYCf");
+declare_id!("F1CrmG8QNUczRGFsyDfwnc1qBRL8UJDVtZgL43zhYiXQ");
 
 pub mod instructions;
 pub use instructions::*;
@@ -17,11 +17,11 @@ pub mod staking {
 
     pub fn initialize_pool(
         ctx: Context<InitializePool>,
-        pool_nonce: u8,
+        bump: u8,
         reward_duration: u64,
         lock_period: u64,
     ) -> Result<()> {
-        initialize_pool::exec(ctx, pool_nonce, reward_duration, lock_period)
+        initialize_pool::exec(ctx, bump, reward_duration, lock_period)
     }
 
     pub fn create_user(ctx: Context<CreateUser>) -> Result<()> {

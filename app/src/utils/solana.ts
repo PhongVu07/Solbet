@@ -3,7 +3,7 @@ import { SolanaApiUrl, SolanaCluster } from 'constants/solana';
 
 export const getClusterDetail = () => {
   const cluster =
-    process.env.NEXT_PUBLIC_SOLANA_CLUSTER || SolanaCluster.MAINNET;
+    process.env.REACT_APP_CLUSTER || SolanaCluster.MAINNET;
   let clusterApiUrl: string = SolanaApiUrl.MAINNET;
   if (cluster === SolanaCluster.LOCALNET) {
     clusterApiUrl = SolanaApiUrl.LOCALNET;

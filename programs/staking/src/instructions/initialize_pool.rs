@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use anchor_lang::solana_program::{program_option::COption};
+use anchor_lang::solana_program::program_option::COption;
 use anchor_spl::token::{Mint, Token, TokenAccount};
 
 use crate::errors::ErrorCode;
@@ -19,7 +19,7 @@ pub struct InitializePool<'info> {
         // in our "pool close" operation we want to assert it is still open
         constraint = staking_vault.close_authority == COption::None,
     )]
-    pub staking_vault: Account<'info, TokenAccount>,
+    pub staking_vault: Box<Account<'info, TokenAccount>>,
 
     pub reward_mint: Box<Account<'info, Mint>>,
 
@@ -29,7 +29,7 @@ pub struct InitializePool<'info> {
         // in our "pool close" operation we want to assert it is still open
         constraint = reward_vault.close_authority == COption::None,
     )]
-    pub reward_vault: Account<'info, TokenAccount>,
+    pub reward_vault: Box<Account<'info, TokenAccount>>,
 
     #[account(
         seeds = [

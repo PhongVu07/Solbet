@@ -2,16 +2,16 @@
 seeds = false
 
 [programs.localnet]
-program = "5zBTgkGKfAcsVdTh5gjgW7KyXYzUZc9ZWuukMmbNqYCf"
+staking = "F1CrmG8QNUczRGFsyDfwnc1qBRL8UJDVtZgL43zhYiXQ"
 [program.devnet]
-program = "5zBTgkGKfAcsVdTh5gjgW7KyXYzUZc9ZWuukMmbNqYCf"
+staking = "F1CrmG8QNUczRGFsyDfwnc1qBRL8UJDVtZgL43zhYiXQ"
 
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
 cluster = "devnet"
-wallet = "/Users/phongvu/.config/solana/cli/config.yml"
+wallet = "/Users/phongvu/.config/solana/phantom.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

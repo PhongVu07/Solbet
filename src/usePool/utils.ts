@@ -7,7 +7,7 @@ import idl from "../constants/idl.json";
 
 export const getStakingProgram = (
   connection: Connection,
-  connectedWallet: ConnectedWallet | null
+  connectedWallet: ConnectedWallet | anchor.Wallet | null
 ) => {
   if (!!connectedWallet) {
     const provider = new anchor.AnchorProvider(connection, connectedWallet, {
@@ -22,6 +22,8 @@ export const getStakingProgram = (
 
     return stakingProgram;
   }
+
+  throw new Error("Wallet not connected")
 };
 
 export const getStakeAccount = async (
