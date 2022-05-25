@@ -1,9 +1,4 @@
-function sayMyName(name: string): void {
-  if (name === "Heisenberg") {
-    console.log("You're right 👍");
-  } else {
-    console.log("You're wrong 👎");
-  }
-}
-
-sayMyName("Heisenberg");
+export * from "./actions"
+export * from "./constants"
+export * from "./types"
+export {default as usePool} from './usePool';

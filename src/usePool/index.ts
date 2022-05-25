@@ -11,7 +11,7 @@ import {
   getPoolDetail,
   getStakeAccount,
   getStakingProgram,
-} from "./utils";
+} from "../actions/utils";
 
 type UseStakePool = {
   poolAddress: PublicKey;
@@ -268,4 +268,4 @@ const usePool = ({ poolAddress, connection }: UseStakePool) => {
   };
 };
 
-export default usePool;
+export default usePool

@@ -3,7 +3,7 @@ import { ConnectedWallet } from "@saberhq/use-solana";
 import { Connection, PublicKey } from "@solana/web3.js";
 
 import { SOLPOOL_PROGRAM_ID } from "../constants";
-import idl from "../constants/idl.json";
+import idl from "../constants/staking.json";
 
 export const getStakingProgram = (
   connection: Connection,
