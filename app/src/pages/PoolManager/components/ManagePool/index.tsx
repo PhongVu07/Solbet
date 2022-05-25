@@ -12,21 +12,24 @@ import {
   Select,
   Typography,
 } from "antd";
+import * as anchor from "@project-serum/anchor";
 import { isEmpty } from "lodash";
 import { getPools } from "utils/getPools";
-import { RawPool } from "temp/types/pool";
 import { NoPool, PoolManagerContainer } from "./style";
-import { getPoolDetail } from "temp/usePool/utils";
+
+import fund from "temp/actions/fund";
+import { RawPoolAccount } from "temp/types/pool";
+import { getPoolDetail } from "temp/actions/utils";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 
 const ManagePool: React.FC = () => {
-  const [pools, setPools] = useState<RawPool[]>([]);
+  const [pools, setPools] = useState<RawPoolAccount[]>([]);
   const hasPools = Array.isArray(pools) && pools.length > 0;
 
   const [selectedPoolPubkey, setSelectedPoolPubkey] = useState<string>("");
-  const [poolDetail, setPoolDetail] = useState<any>();
+  const [poolDetail, setPoolDetail] = useState<any>({});
   const hasSelectedPool = !isEmpty(poolDetail);
 
   const wallet = useConnectedWallet();
@@ -55,8 +58,23 @@ const ManagePool: React.FC = () => {
     });
   };
 
-  const onFund = (values: any) => {
-    console.log("Success:", values);
+  const onFund = async ({ amount }: { amount: number }) => {
+    try {
+      if (wallet) {
+        const provider = new anchor.AnchorProvider(connection, wallet, {});
+        const poolAccount = pools.find(
+          (pool) => pool.publicKey.toString() === selectedPoolPubkey
+        );
+        if (poolAccount) {
+          await fund(amount, poolAccount, provider);
+          await handlePoolDetail(selectedPoolPubkey)
+        } else {
+          throw new Error("Invalid Pool Account")
+        }
+      }
+    } catch(e) {
+      console.log(e)
+    }
   };
 
   useEffect(() => {
@@ -101,8 +119,8 @@ const ManagePool: React.FC = () => {
                 )}
               />
               <Form form={form} layout="inline" onFinish={onFund}>
-                <Form.Item label="Fun Amount (tokens)">
-                  <InputNumber style={{minWidth: "300px"}}/>
+                <Form.Item label="Fun Amount (tokens)" name="amount">
+                  <InputNumber style={{ minWidth: "300px" }} />
                 </Form.Item>
                 <Form.Item>
                   <Button type="primary" htmlType="submit">
