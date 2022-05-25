@@ -5,7 +5,7 @@ import { ComponentContainer, OptionCard } from "./style.home";
 import { PAGES } from "constants/pages";
 import { Connection, PublicKey } from "@solana/web3.js";
 
-import {usePool} from "temp";
+import { usePool } from "temp";
 
 const { Title, Paragraph } = Typography;
 
@@ -26,7 +26,9 @@ const Home = () => {
       <Row gutter={20}>
         <Col md={12} sm={12}>
           <OptionCard>
-            <Paragraph>Create and manage pools so everyone can join and stake</Paragraph>
+            <Paragraph>
+              Create and manage pools so everyone can join and stake
+            </Paragraph>
             <Link to={PAGES.POOL_MANAGER}>
               <Button type="primary">Pool Manager</Button>
             </Link>

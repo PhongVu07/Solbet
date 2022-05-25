@@ -1,16 +1,17 @@
 import { Connection, PublicKey } from "@solana/web3.js";
-import { SOLPOOL_PROGRAM_ID } from "temp/constants";
-import { getStakingProgram } from "temp/actions/utils";
 import { ConnectedWallet } from "@saberhq/use-solana";
-import { RawPoolAccount } from "temp/types/pool";
+
+import { getStakingProgram, RawPoolAccount, SOLPOOL_PROGRAM_ID } from "temp";
 
 export const getPoolAccount = async (poolAccount: any, program: any) => {
-  const accountDetail = await program.account.pool.fetch(new PublicKey(poolAccount.pubkey))
+  const accountDetail = await program.account.pool.fetch(
+    new PublicKey(poolAccount.pubkey)
+  );
   return {
     ...accountDetail,
     publicKey: new PublicKey(poolAccount.pubkey),
-  }
-}
+  };
+};
 
 export const getPools = async (
   wallet: ConnectedWallet,
@@ -34,11 +35,11 @@ export const getPools = async (
     }
   );
 
-  if (resp.length == 0) {
+  if (resp.length === 0) {
     return [];
   }
 
-  const stakingProgram = getStakingProgram(connection, wallet)
+  const stakingProgram = getStakingProgram(connection, wallet);
   const getPoolPromises = resp.map((account) => {
     return getPoolAccount(account, stakingProgram);
   });

@@ -3,12 +3,9 @@ import { useConnectedWallet } from "@saberhq/use-solana";
 import { Connection } from "@solana/web3.js";
 import {
   Button,
-  Col,
   Form,
-  Input,
   InputNumber,
   List,
-  Row,
   Select,
   Typography,
 } from "antd";
@@ -17,9 +14,7 @@ import { isEmpty } from "lodash";
 import { getPools } from "utils/getPools";
 import { NoPool, PoolManagerContainer } from "./style";
 
-import fund from "temp/actions/fund";
-import { RawPoolAccount } from "temp/types/pool";
-import { getPoolDetail } from "temp/actions/utils";
+import { fund, getPoolDetail, RawPoolAccount } from "temp";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -67,13 +62,13 @@ const ManagePool: React.FC = () => {
         );
         if (poolAccount) {
           await fund(amount, poolAccount, provider);
-          await handlePoolDetail(selectedPoolPubkey)
+          await handlePoolDetail(selectedPoolPubkey);
         } else {
-          throw new Error("Invalid Pool Account")
+          throw new Error("Invalid Pool Account");
         }
       }
-    } catch(e) {
-      console.log(e)
+    } catch (e) {
+      console.log(e);
     }
   };
 
