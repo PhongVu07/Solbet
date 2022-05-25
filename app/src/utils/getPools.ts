@@ -1,8 +1,8 @@
-import { Program } from '@project-serum/anchor';
 import { Connection, PublicKey } from "@solana/web3.js";
 import { SOLPOOL_PROGRAM_ID } from "temp/constants";
-import { getPoolDetail, getStakingProgram } from "temp/usePool/utils";
+import { getStakingProgram } from "temp/usePool/utils";
 import { ConnectedWallet } from "@saberhq/use-solana";
+import { RawPool } from "temp/types/pool";
 
 export const getPoolAccount = async (poolAccount: any, program: any) => {
   const accountDetail = await program.account.pool.fetch(new PublicKey(poolAccount.pubkey))
@@ -15,7 +15,7 @@ export const getPoolAccount = async (poolAccount: any, program: any) => {
 export const getPools = async (
   wallet: ConnectedWallet,
   connection: Connection
-) => {
+): Promise<RawPool[]> => {
   const filters = [
     {
       memcmp: {

@@ -10,7 +10,7 @@ const { Title, Paragraph } = Typography;
 
 const Home = () => {
   let connection: Connection = new Connection(
-    "https://api.testnet.solana.com",
+    "https://api.devnet.solana.com",
     "processed"
   );
 

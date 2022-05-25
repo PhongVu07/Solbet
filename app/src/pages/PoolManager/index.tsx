@@ -1,63 +1,37 @@
-import React, { useEffect, useState } from "react";
-import { WalletKitProvider, useWalletKit } from "@gokiprotocol/walletkit";
-import { useSolana, useConnectedWallet } from "@saberhq/use-solana";
-import { Button, Form, Input, InputNumber } from "antd";
-import * as anchor from "@project-serum/anchor";
-import { Connection } from "@solana/web3.js";
-import { createPool } from "utils/createPool";
-import { getPools } from "utils/getPools";
+import React, { useState } from "react";
+
+import { ComponentContainer, PageContent, PageTab } from "./style";
+import { Button } from "antd";
+import CreatePoolForm from "./components/CreatePoolForm";
+import ManagePool from "./components/ManagePool";
+
+enum MANAGER_TAB {
+  CREATE = "Create Pool",
+  MANAGE = "Manage Pool",
+}
 
 const PoolManager: React.FC = () => {
-  const wallet = useConnectedWallet();
-  const connection = new Connection("https://api.devnet.solana.com");
-
-  const onFinish = async (values: any) => {
-    try {
-      if (!wallet) {
-        throw new Error("Wallet not connected");
-      }
-      const { mint, period } = values;
-      const provider = new anchor.AnchorProvider(connection, wallet, {});
-
-      const tx = await createPool(period, mint, provider);
-      console.log(tx);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    if (wallet) {
-      getPools(wallet, connection);
-    }
-  }, [wallet]);
+  const [tab, setTab] = useState<MANAGER_TAB>(MANAGER_TAB.MANAGE);
+  const isCreateTab = tab === MANAGER_TAB.CREATE;
 
   return (
-    <>
-      <Form
-        name="basic"
-        labelCol={{ span: 12, offset: 6 }}
-        wrapperCol={{ span: 12, offset: 6 }}
-        initialValues={{ period: 600 }}
-        autoComplete="off"
-        layout="vertical"
-        onFinish={onFinish}
-      >
-        <h3 style={{ textAlign: "center" }}>Create Pool</h3>
-        <Form.Item label="Token Mint" name="mint" required>
-          <Input style={{ width: "100%" }} />
-        </Form.Item>
-        <Form.Item label="Lock Period" name="period" required>
-          <InputNumber style={{ width: "100%" }} />
-        </Form.Item>
-
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Create
-          </Button>
-        </Form.Item>
-      </Form>
-    </>
+    <ComponentContainer>
+      <PageTab>
+        <Button
+          type={isCreateTab ? "primary" : "default"}
+          onClick={() => setTab(MANAGER_TAB.CREATE)}
+        >
+          {MANAGER_TAB.CREATE}
+        </Button>
+        <Button
+          type={!isCreateTab ? "primary" : "default"}
+          onClick={() => setTab(MANAGER_TAB.MANAGE)}
+        >
+          {MANAGER_TAB.MANAGE}
+        </Button>
+      </PageTab>
+      <PageContent>{isCreateTab ? <CreatePoolForm /> : <ManagePool></ManagePool>}</PageContent>
+    </ComponentContainer>
   );
 };
 export default PoolManager;

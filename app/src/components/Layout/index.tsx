@@ -34,7 +34,15 @@ const Layout: React.FC<IProps> = ({ children }) => {
             <HeaderItem>Staking</HeaderItem>
           </Link>
         </div>
-        <Button onClick={connect} type="primary">Wallet</Button>
+        {!!wallet ? (
+          <Button onClick={disconnect} type="primary">
+            Disconnect
+          </Button>
+        ) : (
+          <Button onClick={connect} type="primary">
+            Connect Wallet
+          </Button>
+        )}
       </StyledHeader>
       <Container>{children}</Container>
     </ComponentContainer>
