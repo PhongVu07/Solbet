@@ -4,6 +4,7 @@
   "description": "sdk for sol-pool",
   "main": "dist/index.js",
   "scripts": {
+    "commit": "cz commit",
     "build": "npx tsc",
     "postbuild": "cp package.json dist",
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
