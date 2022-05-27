@@ -17,7 +17,6 @@ jobs:
           node-version: 16
       - run: yarn install --frozen-lockfile
       - run: yarn build
-      - run: yarn postbuild
 
   publish-npm:
     needs: build
@@ -28,7 +27,7 @@ jobs:
         with:
           node-version: 16
           registry-url: https://registry.npmjs.org/
-      - run: yarn install --frozen-lockfile
+      - run: yarn postbuild
       - run: yarn semantic-release
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
