@@ -139,7 +139,7 @@
       ]
     },
     {
-      "name": "execUnstake",
+      "name": "unstake",
       "accounts": [
         {
           "name": "authority",
@@ -558,5 +558,8 @@
       "name": "CannotStakeOrClaimBeforeMaturity",
       "msg": "Need to wait until maturity time to stake or claim."
     }
-  ]
+  ],
+  "metadata": {
+    "address": "F1CrmG8QNUczRGFsyDfwnc1qBRL8UJDVtZgL43zhYiXQ"
+  }
 }

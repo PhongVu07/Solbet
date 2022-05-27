@@ -5,5 +5,5 @@ export * from "./staking"
 
 export type UserAccount = {
   account: PublicKey,
-  bump: number,
+  bump: number | null,
 }

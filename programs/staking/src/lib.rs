@@ -32,8 +32,8 @@ pub mod staking {
         stake::exec_stake(ctx, amount)
     }
 
-    pub fn exec_unstake(ctx: Context<Stake>, amount: u64) -> Result<()> {
-        stake::exec_stake(ctx, amount)
+    pub fn unstake(ctx: Context<Stake>, amount: u64) -> Result<()> {
+        stake::exec_unstake(ctx, amount)
     }
 
     pub fn pause(ctx: Context<Pause>) -> Result<()> {

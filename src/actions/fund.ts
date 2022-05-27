@@ -4,7 +4,8 @@ import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
-import { RawPoolAccount, getStakingProgram } from "..";
+import { getStakingProgram } from "temp/actions/utils";
+import { RawPoolAccount } from "temp/types/pool";
 
 export const fund = async (
   amount: number,
@@ -25,7 +26,7 @@ export const fund = async (
       ASSOCIATED_TOKEN_PROGRAM_ID
     )
   )[0];
-  let [poolSigner, _bump] = await anchor.web3.PublicKey.findProgramAddress(
+  const [poolSigner, _bump] = await anchor.web3.PublicKey.findProgramAddress(
     [pool.publicKey.toBuffer()],
     stakingProgram.programId
   );

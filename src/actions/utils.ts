@@ -71,7 +71,7 @@ export const getPoolDetail = async (poolAccount, connection: Connection) => {
 };
 
 export const fetchUserAccount = async (
-  wallet: ConnectedWallet,
+  wallet: ConnectedWallet | anchor.Wallet,
   pool: PublicKey,
   connection: Connection
 ) => {

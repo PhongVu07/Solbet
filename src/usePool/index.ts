@@ -1,60 +1,68 @@
+import { ConnectedWallet } from "@saberhq/use-solana";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { useState, useEffect, useCallback } from "react";
 import * as anchor from "@project-serum/anchor";
-import { useConnectedWallet, useSolana } from "@saberhq/use-solana";
 import { PublicKey, Connection } from "@solana/web3.js";
 
 import { PRECISION, SOLPOOL_PROGRAM_ID } from "../constants";
-import { PoolDetail, UserAccount } from "../types";
+import { PoolDetail, UserAccount, RawPoolAccount } from "../types";
 import {
   fetchUserAccount,
   getPoolDetail,
   getStakeAccount,
   getStakingProgram,
-} from "../actions/utils";
+} from "../actions";
 
 type UseStakePool = {
   poolAddress: PublicKey;
   connection: Connection;
+  wallet: anchor.Wallet | ConnectedWallet | null;
 };
 
-const usePool = ({ poolAddress, connection }: UseStakePool) => {
+const usePool = ({ poolAddress, connection, wallet }: UseStakePool) => {
   const [reload, setReload] = useState(false);
-  const [poolAccount, setPoolAccount] = useState<any>();
-  const [poolDetail, setPoolDetail] = useState<PoolDetail | null>();
-  const [userTokenAccount, setUserTokenAccount] = useState<any>();
-  const [userAccount, setUserAccount] = useState<UserAccount>();
+  const [poolAccount, setPoolAccount] = useState<RawPoolAccount>();
+  const [poolDetail, setPoolDetail] = useState<PoolDetail>();
+  const [stakeUserTokenAccount, setStakeUserTokenAccount] = useState<any>();
+  const [userAccount, setUserAccount] = useState<UserAccount>({
+    account: PublicKey.default,
+    bump: null,
+  });
   const [userStakeAccount, setUserStakeAccount] = useState<any>();
 
-  const connectedWallet = useConnectedWallet();
-
-  const tokenMint = PublicKey.default;
-
   useEffect(() => {
-    if (!!connectedWallet) {
-      connection
-        .getParsedTokenAccountsByOwner(connectedWallet.publicKey, {
-          mint: tokenMint,
-        })
-        .then((d) => setUserTokenAccount(d))
-        .catch((e) => console.log("get user token account error:", e));
-
-      const stakingProgram = getStakingProgram(connection, connectedWallet);
+    if (!!wallet && poolAddress !== PublicKey.default) {
+      const stakingProgram = getStakingProgram(connection, wallet);
       if (!!stakingProgram) {
         stakingProgram.account.pool
           .fetch(poolAddress)
-          .then((d) => !!d && setPoolAccount(d))
+          //@ts-ignore
+          .then((d: RawPoolAccount) => {
+            if (d) {
+              setPoolAccount(d);
+
+              connection
+                .getParsedTokenAccountsByOwner(wallet.publicKey, {
+                  mint: d.stakingMint,
+                })
+                .then((d) => {
+                  //@ts-ignore
+                  setStakeUserTokenAccount(d.value[0].pubkey);
+                })
+                .catch((e) => console.log("get user token account error:", e));
+            }
+          })
           .catch((e) => console.log("get pool account error:", e));
       }
 
-      fetchUserAccount(connectedWallet, poolAddress, connection)
+      fetchUserAccount(wallet, poolAddress, connection)
         .then(({ userPoolAccount, userPoolDetail }) => {
           setUserAccount(userPoolAccount);
           setUserStakeAccount(userPoolDetail);
         })
         .catch((e) => console.log("get user account error:", e));
     }
-  }, [connectedWallet, reload]);
+  }, [wallet, poolAddress.toString(), reload]);
 
   useEffect(() => {
     if (!!poolAccount && !!connection) {
@@ -65,7 +73,7 @@ const usePool = ({ poolAddress, connection }: UseStakePool) => {
   }, [poolAccount, reload]);
 
   const handleUpdateUserStakeDetail = useCallback(async () => {
-    const stakingProgram = getStakingProgram(connection, connectedWallet);
+    const stakingProgram = getStakingProgram(connection, wallet);
 
     const req =
       !!stakingProgram &&
@@ -77,84 +85,83 @@ const usePool = ({ poolAddress, connection }: UseStakePool) => {
     }
   }, [userAccount, userStakeAccount]);
 
-  const stake = async (input: number) => {
-    const stakingProgram = getStakingProgram(connection, connectedWallet);
-    if (!userAccount || !stakingProgram || !connectedWallet) {
-      return;
-    }
-    let POOL_SIGNER = new PublicKey(
-      "6bKgLEfMW3d4Hwx2u53FJoLsTrsuobZQKaVJy582RJcA"
-    );
-    let STAKING_VAULT = new PublicKey(
-      "4EFEhmf8Cp6nJz4i8pYXjyWyYwtP6pj3F4XkSz1G2Qmt"
-    );
+  const stake = useCallback(
+    async (input: number) => {
+      const stakingProgram = getStakingProgram(connection, wallet);
+      if (!stakeUserTokenAccount || !stakingProgram || !poolAccount || !wallet) {
+        throw new Error("Somethings wrong");
+      }
 
-    const exist = await connection.getBalance(userAccount.account);
+      const [poolSigner, _bump] =
+        await anchor.web3.PublicKey.findProgramAddress(
+          [poolAddress.toBuffer()],
+          stakingProgram.programId
+        );
 
-    const amount = new anchor.BN(input);
-    let tx;
-    if (!exist) {
-      // Stake account does not exist
-      const ix = await stakingProgram.methods
-        .createUser()
-        .accounts({
-          pool: poolAddress,
-          user: userAccount.account,
-          owner: connectedWallet.publicKey,
-          systemProgram: anchor.web3.SystemProgram.programId,
-        })
-        .instruction();
-
-      tx = await stakingProgram.methods
-        .stake(amount)
-        .accounts({
-          accounts: {
+      const exist = await connection.getBalance(userAccount.account);
+      const amount = new anchor.BN(input);
+      let tx;
+      if (!exist) {
+        // Stake account does not exist
+        const ix = await stakingProgram.methods
+          .createUser()
+          .accounts({
             pool: poolAddress,
-            stakingVault: STAKING_VAULT,
             user: userAccount.account,
-            owner: connectedWallet.publicKey,
-            stakeFromAccount: userTokenAccount,
-            poolSigner: POOL_SIGNER,
-            tokenProgram: TOKEN_PROGRAM_ID,
-          },
-        })
-        .postInstructions([ix])
-        .rpc();
-    } else {
-      tx = await stakingProgram.methods
-        .stake(amount)
-        .accounts({
-          accounts: {
-            pool: poolAddress,
-            stakingVault: STAKING_VAULT,
-            user: userAccount.account,
-            owner: connectedWallet.publicKey,
-            stakeFromAccount: userTokenAccount,
-            poolSigner: POOL_SIGNER,
-            tokenProgram: TOKEN_PROGRAM_ID,
-          },
-        })
-        .rpc();
-    }
+            owner: wallet.publicKey,
+            systemProgram: anchor.web3.SystemProgram.programId,
+          })
+          .instruction();
 
-    return tx;
-  };
+        tx = await stakingProgram.methods
+          .stake(amount)
+          .accounts({
+            pool: poolAddress,
+            stakingVault: poolAccount.stakingVault,
+            user: userAccount.account,
+            owner: wallet.publicKey,
+            stakeFromAccount: stakeUserTokenAccount,
+            poolSigner,
+            tokenProgram: TOKEN_PROGRAM_ID,
+          })
+          .preInstructions([ix])
+          .rpc();
+      } else {
+        tx = await stakingProgram.methods
+          .stake(amount)
+          .accounts({
+            pool: poolAddress,
+            stakingVault: poolAccount.stakingVault,
+            user: userAccount.account,
+            owner: wallet.publicKey,
+            stakeFromAccount: stakeUserTokenAccount,
+            poolSigner,
+            tokenProgram: TOKEN_PROGRAM_ID,
+          })
+          .rpc();
+      }
+
+      console.log(tx);
+      return tx;
+    },
+    [userAccount, stakeUserTokenAccount, poolAccount]
+  );
 
   const unstake = async (input: number) => {
-    const stakingProgram = getStakingProgram(connection, connectedWallet);
+    const stakingProgram = getStakingProgram(connection, wallet);
     if (
       !userAccount ||
-      !userTokenAccount ||
+      !stakeUserTokenAccount ||
       !stakingProgram ||
-      !connectedWallet
+      !poolAccount ||
+      !wallet
     ) {
       return;
     }
-    let POOL_SIGNER = new PublicKey(
-      "6bKgLEfMW3d4Hwx2u53FJoLsTrsuobZQKaVJy582RJcA"
-    );
-    let STAKING_VAULT = new PublicKey(
-      "4EFEhmf8Cp6nJz4i8pYXjyWyYwtP6pj3F4XkSz1G2Qmt"
+
+    const [poolSigner, _bump] = await anchor.web3.PublicKey.findProgramAddress(
+      [poolAddress.toBuffer()],
+      stakingProgram.programId
     );
 
     const amount = new anchor.BN(input);
@@ -163,11 +170,11 @@ const usePool = ({ poolAddress, connection }: UseStakePool) => {
       .unstake(amount)
       .accounts({
         pool: poolAddress,
-        stakingVault: STAKING_VAULT,
+        stakingVault: poolAccount.stakingVault,
         user: userAccount.account,
-        owner: connectedWallet.publicKey,
-        stakeFromAccount: userTokenAccount,
-        poolSigner: POOL_SIGNER,
+        owner: wallet.publicKey,
+        stakeFromAccount: stakeUserTokenAccount,
+        poolSigner,
         tokenProgram: TOKEN_PROGRAM_ID,
       })
       .rpc();
@@ -178,55 +185,48 @@ const usePool = ({ poolAddress, connection }: UseStakePool) => {
   };
 
   const claim = async () => {
-    const stakingProgram = getStakingProgram(connection, connectedWallet);
+    const stakingProgram = getStakingProgram(connection, wallet);
     if (
       !userAccount ||
-      !userTokenAccount ||
+      !stakeUserTokenAccount ||
       !stakingProgram ||
-      !connectedWallet
+      !poolAccount ||
+      !wallet
     ) {
       return;
     }
 
-    let POOL_SIGNER = new PublicKey(
-      "6bKgLEfMW3d4Hwx2u53FJoLsTrsuobZQKaVJy582RJcA"
-    );
-    let STAKING_VAULT = new PublicKey(
-      "4EFEhmf8Cp6nJz4i8pYXjyWyYwtP6pj3F4XkSz1G2Qmt"
-    );
-    let REWARD_VAULT = new PublicKey(
-      "BaZLBtwAGGkdyhivVvwWmdDoS8c9CAJYdt6esXTFswW5"
+    const [poolSigner, _bump] = await anchor.web3.PublicKey.findProgramAddress(
+      [poolAddress.toBuffer()],
+      stakingProgram.programId
     );
 
     const tx = await stakingProgram.methods
       .claim()
       .accounts({
         pool: poolAddress,
-        stakingVault: STAKING_VAULT,
-        rewardVault: REWARD_VAULT,
+        stakingVault: poolAccount.stakingVault,
+        rewardVault: poolAccount.rewardVault,
         user: userAccount.account,
-        owner: connectedWallet.publicKey,
-        rewardAccount: userTokenAccount,
-        poolSigner: POOL_SIGNER,
+        owner: wallet.publicKey,
+        rewardAccount: stakeUserTokenAccount,
+        poolSigner,
         tokenProgram: TOKEN_PROGRAM_ID,
       })
       .rpc();
 
     handleUpdateUserStakeDetail();
 
+    console.log(tx)
     return tx;
   };
 
-  const getPendingReward = () => {
-    if (
-      userStakeAccount &&
-      poolDetail &&
-      poolAccount
-    ) {
+  const getPendingReward = useCallback(() => {
+    if (userStakeAccount && poolDetail && poolAccount) {
       const totalStaked = new anchor.BN(poolDetail.tvl);
       const currentTime = Math.floor(Date.now() / 1000);
       const rewardDurationEnd = parseInt(
-        poolAccount.rewardDurationEnd.toNumber()
+        poolAccount.rewardDurationEnd.toString()
       );
       const lastTimeRewardApplicable = new anchor.BN(
         currentTime > rewardDurationEnd ? rewardDurationEnd : currentTime
@@ -243,22 +243,19 @@ const usePool = ({ poolAddress, connection }: UseStakePool) => {
         );
       }
       const pendingAmount = userStakeAccount.balanceStaked
-        .mul(
-          rewardPerTokenStored.sub(userStakeAccount.rewardPerTokenComplete)
-        )
+        .mul(rewardPerTokenStored.sub(userStakeAccount.rewardPerTokenComplete))
         .div(PRECISION)
         .add(userStakeAccount.rewardPerTokenPending);
 
-      return parseInt(pendingAmount) < 0
-        ? 0
-        : parseInt(pendingAmount);
+      return parseInt(pendingAmount) < 0 ? 0 : parseInt(pendingAmount);
     }
 
     return 0;
-  };
+  }, [userStakeAccount, poolDetail, poolAccount]);
 
   return {
     userStakeAccount,
+    poolAccount,
     poolDetail,
     setReload,
     stake,
@@ -268,4 +265,4 @@ const usePool = ({ poolAddress, connection }: UseStakePool) => {
   };
 };
 
-export default usePool
+export default usePool;
