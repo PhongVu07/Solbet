@@ -15,6 +15,7 @@ import { getPools } from "utils/getPools";
 import { NoPool, PoolManagerContainer } from "./style";
 
 import { fund, getPoolDetail, RawPoolAccount } from "temp";
+import { pushNotification } from "utils/notification";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -63,12 +64,14 @@ const ManagePool: React.FC = () => {
         if (poolAccount) {
           await fund(amount, poolAccount, provider);
           await handlePoolDetail(selectedPoolPubkey);
+          pushNotification("success", "Fund succeed")
         } else {
           throw new Error("Invalid Pool Account");
         }
       }
     } catch (e) {
       console.log(e);
+      pushNotification("error", "Fund failed")
     }
   };
 

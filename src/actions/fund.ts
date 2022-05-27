@@ -4,8 +4,8 @@ import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
-import { getStakingProgram } from "temp/actions/utils";
-import { RawPoolAccount } from "temp/types/pool";
+import { getStakingProgram } from "../actions";
+import { RawPoolAccount } from "../types";
 
 export const fund = async (
   amount: number,
