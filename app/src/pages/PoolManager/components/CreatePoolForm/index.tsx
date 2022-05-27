@@ -3,7 +3,7 @@ import { useConnectedWallet } from "@saberhq/use-solana";
 import { Button, Form, Input, InputNumber } from "antd";
 import * as anchor from "@project-serum/anchor";
 import { Connection } from "@solana/web3.js";
-import { createPool } from "temp";
+import { createPool } from "sol-pool";
 
 const CreatePoolForm: React.FC = () => {
   const wallet = useConnectedWallet();

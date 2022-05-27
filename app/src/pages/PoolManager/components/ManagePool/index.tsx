@@ -14,7 +14,7 @@ import { isEmpty } from "lodash";
 import { getPools } from "utils/getPools";
 import { NoPool, PoolManagerContainer } from "./style";
 
-import { fund, getPoolDetail, RawPoolAccount } from "temp";
+import { fund, getPoolDetail, RawPoolAccount } from "sol-pool";
 import { pushNotification } from "utils/notification";
 
 const { Title, Text } = Typography;

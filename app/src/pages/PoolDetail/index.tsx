@@ -13,7 +13,7 @@ import { ComponentContainer } from "./style";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { useConnectedWallet } from "@saberhq/use-solana";
 
-import { usePool } from "temp";
+import { usePool } from "sol-pool";
 import { formatPoolData, formatUserData } from "./utils";
 import { pushNotification } from "utils/notification";
 
@@ -24,7 +24,7 @@ const PoolDetail: React.FC = () => {
   const [poolPubkey, setPoolPubkey] = useState<string>("");
   const [pendingReward, setPendingReward] = useState(0);
 
-  const wallet = useConnectedWallet();
+  const wallet = useConnectedWallet() as any;
   const [form] = Form.useForm();
 
   const connection: Connection = new Connection(
