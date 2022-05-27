@@ -1,6 +1,6 @@
 import { useWalletKit } from "@gokiprotocol/walletkit";
 import { useConnectedWallet, useSolana } from "@saberhq/use-solana";
-import { Button, Menu } from "antd";
+import { Button } from "antd";
 import { PAGES } from "constants/pages";
 import React from "react";
 import { Link } from "react-router-dom";

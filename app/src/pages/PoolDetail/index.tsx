@@ -18,7 +18,7 @@ import { formatPoolData, formatUserData } from "./utils";
 import { pushNotification } from "utils/notification";
 
 const { Search } = Input;
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 const PoolDetail: React.FC = () => {
   const [poolPubkey, setPoolPubkey] = useState<string>("");

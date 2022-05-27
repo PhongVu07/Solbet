@@ -4,7 +4,7 @@
   "description": "sdk for sol-pool",
   "main": "dist/index.js",
   "scripts": {
-    "build": "DISABLE_ESLINT_PLUGIN=true npx tsc",
+    "build": "npx tsc",
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
     "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"
   },
