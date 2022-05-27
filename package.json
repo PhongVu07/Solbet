@@ -9,7 +9,7 @@
     "postbuild": "cp package.json dist",
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
     "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check",
-    "semantic-release": "semantic-release"
+    "release": "semantic-release"
   },
   "dependencies": {
     "@project-serum/anchor": "^0.24.2",
