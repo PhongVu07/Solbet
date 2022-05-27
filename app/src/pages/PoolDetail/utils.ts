@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { formatLockPeriod } from "utils/staking";
 
-import { PoolDetail, RawPoolAccount } from "temp";
+import { PoolDetail, RawPoolAccount } from "sol-pool";
 
 export const formatPoolData = (poolDetail?: PoolDetail, poolAccount?: RawPoolAccount) => {
     if (!poolDetail || !poolAccount) {

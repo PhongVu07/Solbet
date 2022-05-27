@@ -1,7 +1,7 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 import { ConnectedWallet } from "@saberhq/use-solana";
 
-import { getStakingProgram, RawPoolAccount, SOLPOOL_PROGRAM_ID } from "temp";
+import { getStakingProgram, RawPoolAccount, SOLPOOL_PROGRAM_ID } from "sol-pool";
 
 export const getPoolAccount = async (poolAccount: any, program: any) => {
   const accountDetail = await program.account.pool.fetch(
@@ -14,7 +14,7 @@ export const getPoolAccount = async (poolAccount: any, program: any) => {
 };
 
 export const getPools = async (
-  wallet: ConnectedWallet,
+  wallet: any,
   connection: Connection
 ): Promise<RawPoolAccount[]> => {
   const filters = [
