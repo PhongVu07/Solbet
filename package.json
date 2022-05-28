@@ -1,6 +1,6 @@
 {
   "name": "sol-pool",
-  "version": "0.0.0-development",
+  "version": "0.0.1-development",
   "description": "sdk for sol-pool",
   "main": "dist/index.js",
   "scripts": {

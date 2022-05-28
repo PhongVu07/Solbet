@@ -4,6 +4,7 @@ import { Button, Form, Input, InputNumber } from "antd";
 import * as anchor from "@project-serum/anchor";
 import { Connection } from "@solana/web3.js";
 import { createPool } from "sol-pool";
+import { pushNotification } from "utils/notification";
 
 const CreatePoolForm: React.FC = () => {
   const wallet = useConnectedWallet();
@@ -17,10 +18,12 @@ const CreatePoolForm: React.FC = () => {
       const { mint, period } = values;
       const provider = new anchor.AnchorProvider(connection, wallet, {});
 
-      const tx = await createPool(period, mint, provider);
+      const {tx, poolPubkey} = await createPool(period, mint, provider);
       console.log(tx);
-    } catch (e) {
+      pushNotification("success", `New pool public key: ${poolPubkey}`)
+    } catch (e: any) {
       console.log(e);
+      pushNotification("error", e.message)
     }
   };
 

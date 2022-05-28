@@ -71,5 +71,5 @@ export const createPool = async (
     .signers([pool, stakingVaultKeypair, rewardVaultKeypair])
     .rpc();
 
-  return tx;
+  return {tx, poolPubkey: pool.publicKey};
 };

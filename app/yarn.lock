@@ -10041,10 +10041,10 @@ sockjs@^0.3.21:
     uuid "^8.3.2"
     websocket-driver "^0.7.4"
 
-sol-pool@^0.0.0-development:
-  version "0.0.0-development"
-  resolved "https://registry.yarnpkg.com/sol-pool/-/sol-pool-0.0.0-development.tgz#13ad002f283541c3bb390d7f108dffa3b6a058eb"
-  integrity sha512-H2yjQe4tYJxwco9k1AWNwejM260ULVb2R8FYbGR9MUfvWTS3sR5QfEThdzQr58yPAFlAx2aZzOJpDYX1I8ps/w==
+sol-pool@^0.0.1-development:
+  version "0.0.1-development"
+  resolved "https://registry.yarnpkg.com/sol-pool/-/sol-pool-0.0.1-development.tgz#8ef054508f7f5a3afef9de7ae640d2fde36f664a"
+  integrity sha512-yAsPb7XjgwyvLgDXPCI1GRoXc7S872o1puopCXN+G0sjLW1vbAOhCECzAq+LW7S41VUuq9aKFt7aymYwWZNTdQ==
   dependencies:
     "@project-serum/anchor" "^0.24.2"
     "@saberhq/use-solana" "^1.13.6"
