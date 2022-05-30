@@ -54,13 +54,25 @@ const PoolDetail: React.FC = () => {
   const poolData = formatPoolData(poolDetail, poolAccount);
   const userData = formatUserData(userStakeAccount, pendingReward);
 
-  const handleStake = async (amount: number) => {
-    try {
-      await stake(amount);
-      pushNotification("success", "Token staked");
-    } catch (e) {
-      console.log(e);
-      pushNotification("error", "Error stake token");
+  const handleFormAction = async () => {
+    const { stakeAmount, unStakeAmount } = form.getFieldsValue();
+    if (stakeAmount) {
+      try {
+        await stake(stakeAmount);
+        pushNotification("success", "Token staked");
+      } catch (e) {
+        console.log(e);
+        pushNotification("error", "Error stake token");
+      }
+    }
+    if (unStakeAmount) {
+      try {
+        await unstake(unStakeAmount);
+        pushNotification("success", "Token unstaked");
+      } catch (e) {
+        console.log(e);
+        pushNotification("error", "Error unstake token");
+      }
     }
   };
 
@@ -71,16 +83,6 @@ const PoolDetail: React.FC = () => {
     } catch (e) {
       console.log(e);
       pushNotification("error", "Error claim token");
-    }
-  };
-
-  const handleUnstake = async (amount: number) => {
-    try {
-      await unstake(amount);
-      pushNotification("success", "Token unstaked");
-    } catch (e) {
-      console.log(e);
-      pushNotification("error", "Error unstake token");
     }
   };
 
@@ -147,14 +149,14 @@ const PoolDetail: React.FC = () => {
             <Form
               form={form}
               layout="inline"
-              onFinish={(value) => handleStake(value.stakeAmount)}
+              onFinish={handleFormAction}
             >
               <Form.Item label="Stake Amount (tokens)" name="stakeAmount">
                 <InputNumber style={{ minWidth: "200px" }} />
               </Form.Item>
               <Form.Item>
                 <Button type="primary" htmlType="submit">
-                  Fund
+                  Stake
                 </Button>
               </Form.Item>
             </Form>
@@ -165,9 +167,9 @@ const PoolDetail: React.FC = () => {
             <Form
               form={form}
               layout="inline"
-              onFinish={(value) => handleUnstake(value.unStakeAmount)}
+              onFinish={handleFormAction}
             >
-              <Form.Item label="Stake Amount (tokens)" name="unStakeAmount">
+              <Form.Item label="Unstake Amount (tokens)" name="unStakeAmount">
                 <InputNumber style={{ minWidth: "200px" }} />
               </Form.Item>
               <Form.Item>

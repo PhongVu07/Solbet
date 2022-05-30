@@ -45,12 +45,12 @@ const ManagePool: React.FC = () => {
     );
     const poolData = await getPoolDetail(poolAccount, connection);
     setPoolDetail({
-      lockPeriod: poolAccount?.lockPeriod.toString(),
-      rewardDuration: poolAccount?.rewardDuration.toString(),
-      rewardDurationEnd: poolAccount?.rewardDurationEnd.toString(),
+      "Lock Period": poolAccount?.lockPeriod.toString(),
+      "Reward Duration": poolAccount?.rewardDuration.toString(),
+      "Reward Duration End": poolAccount?.rewardDurationEnd.toString(),
       ...poolData,
-      rewardMint: poolAccount?.rewardMint.toString(),
-      stakingMint: poolAccount?.stakingMint.toString(),
+      "Reward Mint": poolAccount?.rewardMint.toString(),
+      "Staking Mint": poolAccount?.stakingMint.toString(),
     });
   };
 
